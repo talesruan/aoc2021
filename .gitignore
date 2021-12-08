@@ -105,3 +105,7 @@ dist
 
 # idea
 .idea
+
+.DS_Store
+
+biginput.txt
