@@ -1,7 +1,7 @@
-const fs = require('fs')
+const fs = require("fs");
 
-const data = fs.readFileSync('demoinput.txt', 'utf8')
-console.time("Elapsed time")
+const data = fs.readFileSync("demoinput.txt", "utf8");
+console.time("Elapsed time");
 
 const fn = function () {
 	console.log("data", JSON.stringify(data, null, 2));
@@ -10,5 +10,5 @@ const fn = function () {
 	}
 };
 
-console.log("Result: ", fn ());
-console.timeEnd('Elapsed time');
+console.log("Result: ", fn());
+console.timeEnd("Elapsed time");
