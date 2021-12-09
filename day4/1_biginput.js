@@ -1,6 +1,6 @@
 /**
  * Big inputs from https://the-tk.com/project/aoc2021-bigboys.html
- * This solution completes in about 7s
+ * This solution completes in about 2s
  */
 
 const fs = require("fs");
@@ -22,6 +22,8 @@ const fn = function () {
 		for (const appearance of numberPositionMap[drawnNumber]) {
 			appearance.board.marks[appearance.a][appearance.b] = true;
 			appearance.board.hits++;
+			appearance.board.hitsByRow[appearance.a] = appearance.board.hitsByRow[appearance.a] ? appearance.board.hitsByRow[appearance.a] + 1 : 1;
+			appearance.board.hitsByCol[appearance.b] = appearance.board.hitsByCol[appearance.b] ? appearance.board.hitsByCol[appearance.b] + 1 : 1;
 			if (numbersDrawnSoFar.length >= bingoGridSize && isBoardWon(appearance.board)) {
 				console.log("Found winning board.");
 				return calculateBoardScore(appearance.board, numbersDrawnSoFar, drawnNumber);
@@ -64,7 +66,9 @@ const parseData = (dataString) => {
 			boards[boardNumber] = {
 				numbers: [],
 				marks: [],
-				hits: 0
+				hits: 0,
+				hitsByRow: [],
+				hitsByCol: []
 			};
 		}
 		boards[boardNumber].numbers[rowNumber] = parsedRow;
@@ -75,16 +79,7 @@ const parseData = (dataString) => {
 
 const isBoardWon = (board) => {
 	if (board.hits < bingoGridSize) return false;
-	for (let a = 0; a < bingoGridSize; a++) {
-		let rowHit = true;
-		let columnHit = true;
-		for (let b = 0; b < bingoGridSize; b++) {
-			rowHit = rowHit && board.marks[a][b];
-			columnHit = columnHit && board.marks[b][a];
-		}
-		if (rowHit || columnHit) return true;
-	}
-	return false;
+	return board.hitsByRow.some(hitCount => hitCount >= bingoGridSize) || board.hitsByCol.some(hitCount => hitCount >= bingoGridSize);
 };
 
 const calculateBoardScore = (board, drawnNumbers, lastNumberDrawn) => {
