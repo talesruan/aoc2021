@@ -1,3 +1,8 @@
+/**
+ * Big inputs from https://the-tk.com/project/aoc2021-bigboys.html
+ * Currently not working fast enough
+ */
+
 const fs = require("fs");
 
 const input = fs.readFileSync("demoinput.txt", "utf8");
@@ -11,18 +16,23 @@ const fn = function (input) {
 	const grid = [];
 	const lines = considerDiagonalLines ? data : data.filter(line => line.x1 === line.x2 || line.y1 === line.y2);
 	for (let index = 0; index < lines.length; index++) {
+		// console.log("Line ", index, "of", lines.length);
 		const line = lines[index];
-		console.log("Line ", index, "of", lines.length);
-		for (const point of getLinePoints(line)) {
-			if (hasPoint(grid, point.x, point.y)) {
-				console.log("one overlap point", point);
-				overlapPoints.add(getKey(point.x, point.y));
-			} else {
-				recordPoint(grid, point.x, point.y);
-			}
+		for (let otherIndex = index + 1; otherIndex < lines.length; otherIndex++) {
+			console.log("Line ", index, "of", lines.length, `Line ${index} vs ${otherIndex}`);
+			const otherLine = lines[otherIndex];
+			const lineOverlapPoints = getIntersectionPoints(line, otherLine);
+			lineOverlapPoints.forEach(p => overlapPoints.add(getKey(p.x, p.y)));
 		}
 	}
 	return overlapPoints.size;
+};
+
+const getIntersectionPoints = (line1, line2) => {
+	const points1 = getLinePoints(line1);
+	const points2 = getLinePoints(line2);
+	const intersectionPoints = points1.filter(p1 => points2.some(p2 => p1.x === p2.x && p1.y === p2.y));
+	return intersectionPoints;
 };
 
 const getKey = (x, y) => `${x},${y}`;
