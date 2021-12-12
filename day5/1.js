@@ -6,25 +6,20 @@ console.time("Elapsed time");
 const fn = function (input) {
 	const data = parseData(input);
 	const overlapPoints = new Set();
+	const lineOccurrencePoints = new Set();
 	const horizontalAndVerticalLines = data.filter(line => line.x1 === line.x2 || line.y1 === line.y2);
 	for (let index = 0; index < horizontalAndVerticalLines.length; index++) {
 		console.log("Line ", index, "of", horizontalAndVerticalLines.length);
 		const line = horizontalAndVerticalLines[index];
-		for (let otherIndex = index + 1; otherIndex < horizontalAndVerticalLines.length; otherIndex++) {
-			const otherLine = horizontalAndVerticalLines[otherIndex];
-			const lineOverlapPoints = getIntersectionPoints(line, otherLine);
-			lineOverlapPoints.forEach(p => overlapPoints.add(p));
+		for (const point of getLinePoints(line)) {
+			if (lineOccurrencePoints.has(point)) {
+				overlapPoints.add(point);
+			} else {
+				lineOccurrencePoints.add(point);
+			}
 		}
 	}
 	return overlapPoints.size;
-};
-
-const getIntersectionPoints = (line1, line2) => {
-	// console.log("Intersection points from", line1, "to", line2);
-	const points1 = getLinePoints(line1);
-	const points2 = getLinePoints(line2);
-	const intersectionPoints = points1.filter(p1 => points2.includes(p1));
-	return intersectionPoints;
 };
 
 const getLinePoints = (line) => {
