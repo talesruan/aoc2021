@@ -3,14 +3,15 @@ const fs = require("fs");
 const input = fs.readFileSync("input.txt", "utf8");
 console.time("Elapsed time");
 
+const considerDiagonalLines = true; // set true for part 2
+
 const fn = function (input) {
 	const data = parseData(input);
 	const overlapPoints = new Set();
 	const lineOccurrencePoints = new Set();
-	const horizontalAndVerticalLines = data.filter(line => line.x1 === line.x2 || line.y1 === line.y2);
-	for (let index = 0; index < horizontalAndVerticalLines.length; index++) {
-		console.log("Line ", index, "of", horizontalAndVerticalLines.length);
-		const line = horizontalAndVerticalLines[index];
+	const lines = considerDiagonalLines ? data : data.filter(line => line.x1 === line.x2 || line.y1 === line.y2);
+	for (let index = 0; index < lines.length; index++) {
+		const line = lines[index];
 		for (const point of getLinePoints(line)) {
 			if (lineOccurrencePoints.has(point)) {
 				overlapPoints.add(point);
@@ -23,11 +24,16 @@ const fn = function (input) {
 };
 
 const getLinePoints = (line) => {
+	const xIncrement = Math.sign(line.x2 - line.x1);
+	const yIncrement = Math.sign(line.y2 - line.y1);
 	const points = [];
-	for (let x = Math.min(line.x1, line.x2); x <= Math.max(line.x1, line.x2); x++) {
-		for (let y = Math.min(line.y1, line.y2); y <= Math.max(line.y1, line.y2); y++) {
-			points.push(`${x},${y}`);
-		}
+	let x = line.x1;
+	let y = line.y1;
+	points.push(`${x},${y}`);
+	while (x !== line.x2 || y !== line.y2) {
+		x += xIncrement;
+		y += yIncrement;
+		points.push(`${x},${y}`);
 	}
 	return points;
 };
