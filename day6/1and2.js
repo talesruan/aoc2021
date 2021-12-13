@@ -43,5 +43,6 @@ const display = (count) => {
 	console.log("Fish count: ", countFish(count));
 };
 
-console.log("Result: ", fn(input, 80));
+console.log("Result: ", fn(input, 80)); // part 1
+console.log("Result: ", fn(input, 256)); // part 2
 console.timeEnd("Elapsed time");
