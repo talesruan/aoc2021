@@ -22,7 +22,7 @@ const getMedian = (sortedArray) => {
 	}
 	const middle1 = (sortedArray.length / 2) - 1;
 	const middle2 = (sortedArray.length / 2);
-	return (sortedArray[middle1] + sortedArray[middle2]) / 2
+	return (sortedArray[middle1] + sortedArray[middle2]) / 2;
 };
 
 console.log("Result: ", fn(input));
