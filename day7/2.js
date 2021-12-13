@@ -18,7 +18,7 @@ const fn = function (input) {
 
 const getAverage = (array) => {
 	const sum = array.reduce((a, b) => a + b, 0);
-	return Math.floor(sum / array.length); // I think it should be rounded, but is not the accepted answer
+	return Math.floor(sum / array.length);
 };
 
 console.log("Result: ", fn(input));
