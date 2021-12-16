@@ -1,6 +1,6 @@
 /**
  * Big inputs from https://the-tk.com/project/aoc2021-bigboys.html
- * This solution completes in 24s.
+ * This solution completes in 24s. It can be improved
  */
 const fs = require("fs");
 
