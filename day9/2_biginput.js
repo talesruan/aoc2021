@@ -88,7 +88,6 @@ class HeightMap {
 		this.matrix = matrix;
 		this.sizeY = this.matrix.length;
 		this.sizeX = this.matrix[0].length;
-
 	}
 
 	iterate (func) {

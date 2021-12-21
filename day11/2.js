@@ -5,17 +5,19 @@ console.time("Elapsed time");
 
 const fn = function (input) {
 	const grid = parseInput(input);
-	const steps = 100;
 	display(grid);
-	let totalFlashes = 0;
-	for (let i = 0; i < steps; i++) {
+	let stepNumber = 0;
+	while (true) {
+		stepNumber ++;
 		const stepFlashes = step(grid);
-		totalFlashes += stepFlashes;
 		console.log("");
-		console.log("Step", i + 1);
+		console.log("Step", stepNumber);
 		display(grid);
 		console.log("flashes ", stepFlashes);
-		console.log("Total flashes", totalFlashes);
+		if (stepFlashes === grid.sizeX * grid.sizeY) {
+			console.log("Found sync!");
+			return stepNumber;
+		}
 	}
 };
 
@@ -23,9 +25,7 @@ const incrementEnergy = (grid, x, y) => {
 	const newEnergyLevel = grid.get(x, y) + 1;
 	if (newEnergyLevel > 9 + 1) return; // already flashed
 	grid.set(x, y, newEnergyLevel);
-
 	if (newEnergyLevel > 9) {
-		// power adjacents
 		for (const adjacent of grid.getAdjacentCoords(x, y)) {
 			incrementEnergy(grid, adjacent.x, adjacent.y);
 		}
@@ -47,8 +47,14 @@ const step = (grid) => {
 };
 
 class Grid {
+	matrix;
+	sizeY;
+	sizeX;
+
 	constructor (matrix) {
 		this.matrix = matrix;
+		this.sizeY = this.matrix.length;
+		this.sizeX = this.matrix[0].length;
 	}
 
 	iterate (func) {
