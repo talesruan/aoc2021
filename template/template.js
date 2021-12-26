@@ -5,7 +5,7 @@ console.time("Elapsed time");
 
 const fn = function (input) {
 	console.log("data", JSON.stringify(input, null, 2));
-	for (const line of input.split("\n")) {
+	for (const line of input.split("\n").filter(l => l !== "")) {
 		console.log("line ", line);
 	}
 };
