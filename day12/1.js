@@ -11,7 +11,7 @@ const fn = function (input) {
 const visitCave = (cave, links, path) => {
 	path = [...path, cave];
 	if (cave === "end") {
-		console.log("Reached end", path);
+		console.log("Found path:", path.join(","));
 		return 1;
 	}
 	const candidates = links.filter(link => link.from === cave).map(link => link.to);
