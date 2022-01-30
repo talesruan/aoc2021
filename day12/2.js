@@ -1,3 +1,6 @@
+/**
+ * Works fine but I'm not happy with this code
+ */
 const fs = require("fs");
 
 const input = fs.readFileSync("input.txt", "utf8");
@@ -5,11 +8,11 @@ console.time("Elapsed time");
 
 const fn = function (input) {
 	const links = parseInput(input);
-	return visitCave("start", links, {path: []});
+	return visitCave("start", links, []);
 };
 
-const visitCave = (cave, links, memory) => {
-	const path = [...memory.path, cave];
+const visitCave = (cave, links, path, smallCaveVisitedTwice) => {
+	path = [...path, cave];
 	if (cave === "end") {
 		console.log("Found path:", path.join(","));
 		return 1;
@@ -21,12 +24,12 @@ const visitCave = (cave, links, memory) => {
 		const isVisited = path.includes(destination);
 		if (isVisited && isSmallCave(destination)) {
 			if (destination === "start") continue;
-			if (memory.smallCaveVisitedTwice) continue;
+			if (smallCaveVisitedTwice) continue;
 			const numberOfVisits = path.filter(c => c === destination).length;
 			if (numberOfVisits >= 2) continue;
 			willVisitSmallCaveAgain = true;
 		}
-		pathsFound += visitCave(destination, links, {path, smallCaveVisitedTwice: memory.smallCaveVisitedTwice || willVisitSmallCaveAgain});
+		pathsFound += visitCave(destination, links, path, smallCaveVisitedTwice || willVisitSmallCaveAgain);
 	}
 	return pathsFound;
 };
