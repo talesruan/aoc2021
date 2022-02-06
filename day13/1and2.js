@@ -1,27 +1,40 @@
 const fs = require("fs");
 
-const input = fs.readFileSync("demoinput.txt", "utf8");
+const input = fs.readFileSync("input.txt", "utf8");
 console.time("Elapsed time");
 
 const fn = input => {
+	const numberOfFoldsToRun = 999;
 	const data = parseInput(input);
-	console.log("data", JSON.stringify(data.coords, null, 2));
-	displayByCoords(data.coords);
-	const folded = fold(data.coords, data.foldInstructions[0].axis, data.foldInstructions[0].value);
-	displayByCoords(folded);
+	let coords = data.coords;
+	console.log("Starting sheet");
+	for (let i = 0; i < data.foldInstructions.length; i++) {
+		if (i >= numberOfFoldsToRun) break;
+		console.log("Folding", data.foldInstructions[i]);
+		coords = fold(coords, data.foldInstructions[i].axis, data.foldInstructions[i].value);
+	}
+	console.log("Folded sheet (final):");
+	displayByCoords(coords);
+	return countDots(coords);
 };
 
 const fold = (coords, axis, foldPosition) => {
-	const foldedGrid = new Grid();
+	const otherAxis = axis === "x" ? "y" : "x";
 	const foldedCoords = coords.map(xy => {
-		if (xy.y < foldPosition) return xy;
-		return {x: xy.x, y: xy.y - ((xy.y - foldPosition) * 2)};
+		if (xy[axis] < foldPosition) return xy;
+		return {
+			[otherAxis]: xy[otherAxis],
+			[axis]: xy[axis] - ((xy[axis] - foldPosition) * 2)
+		};
 	});
+	// Possible optimization: Remove duplicated dots
 	return foldedCoords;
 };
 
-const countDots = grid => {
-
+const countDots = coords => {
+	const set = new Set();
+	coords.map(xy => `${xy.x},${xy.y}`).forEach(xy => set.add(xy));
+	return set.size;
 };
 
 class Grid {
@@ -47,12 +60,7 @@ class Grid {
 	}
 
 	set (x, y, value) {
-		// sizex 5
-		// x max 4
-		if (x > this.sizeX - 1) {
-			console.log("xy", x, y, "sizex increased from", this.sizeX, "to", x+1);
-			this.sizeX = x + 1;
-		}
+		if (x > this.sizeX - 1) this.sizeX = x + 1;
 		if (y > this.sizeY - 1) this.sizeY = y + 1;
 		if (!this.matrix[y]) this.matrix[y] = [];
 		this.matrix[y][x] = value;
@@ -87,11 +95,6 @@ const getGridByCoords = (coords) => {
 };
 
 const display = (grid) => {
-	// let width = 0;
-	// for (const row of grid.matrix) {
-	// 	if (!row) continue;
-	// 	width = Math.max(width, row.length);
-	// }
 	for (let y = 0; y < grid.matrix.length; y++) {
 		let line = "";
 		for (let x = 0; x < grid.sizeX; x++) {
