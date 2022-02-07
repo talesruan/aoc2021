@@ -4,10 +4,17 @@ const input = fs.readFileSync("demoinput.txt", "utf8");
 console.time("Elapsed time");
 
 const fn = input => {
-	console.log("data", JSON.stringify(input, null, 2));
+	const data = parseInput(input);
+	console.log("data", JSON.stringify(data, null, 2));
+	return 0;
+};
+
+const parseInput = input => {
+	const data = [];
 	for (const line of input.split("\n").filter(l => l !== "")) {
-		console.log("line ", line);
+		data.push(line);
 	}
+	return data;
 };
 
 console.log("Result: ", fn(input));
