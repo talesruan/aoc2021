@@ -3,10 +3,15 @@ const fs = require("fs");
 const input = fs.readFileSync("demoinput.txt", "utf8");
 console.time("Elapsed time");
 
+const numberOfSteps = 40;
+// const maxElements = 201326593; // 26
+const maxElements = 3298534883329; // 40
+// const maxElements = 3221225473; // 30
+
 const fn = input => {
-	const numberOfSteps = 10;
 	const data = parseInput(input);
 	const elementsCount = runSteps(numberOfSteps, data.template, data.rules);
+	delete elementsCount.total;
 	const sortedElementsCount = Object.values(elementsCount).sort((a, b) => a - b);
 	const mostCommonElementCount = sortedElementsCount[sortedElementsCount.length - 1];
 	const leastCommonElementCount = sortedElementsCount[0];
@@ -15,53 +20,39 @@ const fn = input => {
 	return mostCommonElementCount - leastCommonElementCount;
 };
 
-const countElements = (polymer, elementCount) => {
-	for (const element of polymer.split("")) {
-		if (!elementCount[element]) elementCount[element] = 0;
-		elementCount[element]++;
-	}
+const countElement = (element, elementCount) => {
+	elementCount.total++;
+	if (elementCount.total % 10000000 === 0) console.log(`E ${elementCount.total}/${maxElements}`, (elementCount.total / maxElements * 100).toFixed(5) + "%");
+	if (!elementCount[element]) elementCount[element] = 0;
+	elementCount[element]++;
 	return elementCount;
 };
 
 const runSteps = (steps, template, rules) => {
-	const elementsCount = {};
+	const elementsCount = {total: 0};
 	dfs(steps, 0, template, elementsCount, rules);
+	countElement(template[template.length - 1], elementsCount);
 	console.log("elementCount", JSON.stringify(elementsCount, null, 2));
-	countElements(template[template.length - 1], elementsCount);
 	return elementsCount;
 };
 
 const dfs = (targetStep, currentStep, polymer, elementsCount, rules) => {
 	if (targetStep === currentStep) {
 		// console.log("Stopping here", polymer);
-		countElements(polymer[0] + polymer[1], elementsCount);
+		countElement(polymer[0], elementsCount);
+		countElement(polymer[1], elementsCount);
 		return;
 	}
 	for (let index = 0; index < polymer.length - 1; index++) {
 		const scannedPart = polymer[index] + polymer[index + 1];
 		const rule = findRule(scannedPart, rules);
-		const newPolymer = polymer[index] + rule.value + polymer[index + 1];
+		const newPolymer = polymer[index] + rule + polymer[index + 1];
 		dfs(targetStep, currentStep + 1, newPolymer, elementsCount, rules);
 	}
 };
 
-const step = (polymer, rules) => {
-	const newPolymer = polymer.split("");
-	let insertionIndex = 0;
-	for (let index = 0; index < polymer.length - 1; index++) {
-		insertionIndex++;
-		const scannedPart = polymer[index] + polymer[index + 1];
-		const rule = findRule(scannedPart, rules);
-		if (rule) {
-			newPolymer.splice(insertionIndex, 0, rule.value);
-			insertionIndex++;
-		}
-	}
-	return newPolymer.join("");
-};
-
 const findRule = (key, rules) => {
-	return rules.find(rule => rule.condition === key);
+	return rules[key];
 };
 
 const parseInput = input => {
@@ -72,7 +63,7 @@ const parseInput = input => {
 			data.template = line;
 		} else {
 			const parsedRule = line.split(" -> ");
-			data.rules.push({condition: parsedRule[0], value: parsedRule[1]});
+			data.rules[parsedRule[0]] = parsedRule[1];
 		}
 		lineNumber++;
 	}
