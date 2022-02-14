@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const input = fs.readFileSync("demoinput.txt", "utf8");
+const input = fs.readFileSync("input.txt", "utf8");
 console.time("Elapsed time");
 
 const fn = input => {
@@ -29,7 +29,6 @@ const runSteps = (steps, template, rules) => {
 	let polymer = template;
 	console.log("Template:", template);
 	for (let i = 0; i < steps; i++) {
-		// console.log("After step", i + 1, polymer);
 		console.log("Running step", i + 1);
 		polymer = step(polymer, rules);
 	}
